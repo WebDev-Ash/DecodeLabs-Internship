@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Todo - Responsive UI</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__dot" aria-hidden="true"></span>
+        <h1 class="brand__title">Todo</h1>
+      </div>
+
+      <div class="topbar__right">
+        <div class="pill" id="tasksCountPill" aria-live="polite">0 tasks</div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel--composer" aria-label="Add a todo">
+        <form class="composer" id="todoForm">
+          <label class="sr-only" for="todoInput">Todo title</label>
+          <input
+            id="todoInput"
+            name="title"
+            type="text"
+            placeholder="Add a task..."
+            maxlength="120"
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Add</button>
+        </form>
+
+        <div class="composer__meta" role="group" aria-label="Filters">
+          <div class="segmented" role="radiogroup" aria-label="Filter todos">
+            <button type="button" class="segmented__btn is-active" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="segmented__btn" data-filter="active" aria-pressed="false">Active</button>
+            <button type="button" class="segmented__btn" data-filter="done" aria-pressed="false">Done</button>
+          </div>
+
+          <div class="sort">
+            <label for="sortSelect" class="sr-only">Sort</label>
+            <select id="sortSelect" name="sort" aria-label="Sort todos">
+              <option value="created_desc" selected>Newest</option>
+              <option value="created_asc">Oldest</option>
+              <option value="title_asc">Title A→Z</option>
+              <option value="title_desc">Title Z→A</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--list" aria-label="Todo list">
+        <div class="list-header">
+          <div>
+            <h2 class="panel-title">Your tasks</h2>
+            <p class="panel-subtitle" id="summaryText">No tasks yet.</p>
+          </div>
+          <button class="btn btn--ghost" id="clearDoneBtn" type="button">Clear done</button>
+        </div>
+
+        <ul class="todo-list" id="todoList" aria-live="polite"></ul>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-state__icon" aria-hidden="true">✓</div>
+          <div class="empty-state__title">Nothing here</div>
+          <div class="empty-state__hint">Add a task to get started.</div>
+        </div>
+      </section>
+
+      <aside class="panel panel--stats" aria-label="Stats">
+        <h2 class="panel-title">Progress</h2>
+        <div class="progress" aria-label="Completion progress">
+          <div class="progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+            <div class="progress__fill" id="progressFill"></div>
+          </div>
+          <div class="progress__meta">
+            <div><strong id="doneCount">0</strong> done</div>
+            <div><strong id="activeCount">0</strong> active</div>
+          </div>
+        </div>
+
+        <div class="tips">
+          <h3 class="tips__title">Usage guide</h3>
+          <ul class="tips__list">
+            <li>Add a task using the input at the top.</li>
+            <li>Tap the checkbox on a task to mark it as done/active.</li>
+            <li>Use the filter buttons (All / Active / Done) to show what you want.</li>
+            <li>Change sorting using the dropdown (Newest / Oldest / Title).</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <span>Built with HTML • CSS • JS</span>
+      <span class="footer__sep" aria-hidden="true">•</span>
+      <span>Built by Ashish Pratap Maurya @WebDev_Ash</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
