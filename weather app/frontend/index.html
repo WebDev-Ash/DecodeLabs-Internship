@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="theme-default">
+  <div class="bg" aria-hidden="true"></div>
+  <div id="loadingOverlay" class="loading-overlay hidden" aria-hidden="true">
+    <div class="spinner"></div>
+    <p>Loading forecast…</p>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">☁️</div>
+      <div>
+        <div class="brand-title">Weather Atlas</div>
+        <div class="brand-subtitle">Live forecasts powered by Open-Meteo</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="refreshBtn" class="pill icon-pill" type="button" aria-label="Refresh weather" title="Refresh">
+        ↻ Refresh
+      </button>
+      <button id="shareBtn" class="pill icon-pill" type="button" aria-label="Share location" title="Share">
+        🔗 Share
+      </button>
+      <button id="unitToggle" class="pill" type="button" aria-label="Toggle units">
+        °C / °F
+      </button>
+      <button id="geoBtn" class="pill icon-pill" type="button" aria-label="Use my location">
+        📍 My location
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="search-card">
+      <div class="search-row">
+        <div class="search">
+          <label class="sr-only" for="searchInput">Search city</label>
+          <input id="searchInput" type="text" autocomplete="off" placeholder="Search any city (e.g., Tokyo, Paris, Mumbai)" />
+          <button id="searchBtn" type="button">Search</button>
+        </div>
+        <div class="hint">Type to autocomplete • Enter to search</div>
+      </div>
+
+      <div id="suggestions" class="suggestions hidden" role="listbox" aria-label="Location suggestions"></div>
+
+      <div class="quick-row">
+        <div class="quick-group">
+          <span class="quick-label">Recent</span>
+          <div id="recentSearches" class="chip-row" aria-label="Recent searches"></div>
+        </div>
+        <div class="quick-group">
+          <span class="quick-label">Favorites</span>
+          <div class="fav-actions">
+            <button id="saveFavBtn" class="pill pill-sm" type="button" disabled>⭐ Save</button>
+            <div class="favs" id="favs" aria-label="Favorite locations"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="statusBar" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="emptyState" class="empty-state">
+      <div class="empty-icon">🌍</div>
+      <h2>Welcome to Weather Atlas</h2>
+      <p>Search for a city, pick a recent location, or use your current position to see live conditions, hourly trends, and a 7-day outlook.</p>
+    </section>
+
+    <section id="weatherPanel" class="weather-panel hidden">
+      <article class="card hero-card" id="currentCard">
+        <div class="hero-top">
+          <div class="hero-left">
+            <h1 id="placeTitle" class="place-title">—</h1>
+            <div class="meta" id="metaRow">—</div>
+            <div id="summary" class="summary">—</div>
+          </div>
+          <div class="hero-right">
+            <div id="weatherIcon" class="weather-icon" aria-hidden="true">🌤️</div>
+            <div class="temp-wrap">
+              <div id="temp" class="temp">—</div>
+              <div class="temp-unit" id="tempUnit">°C</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-bottom">
+          <div class="stat">
+            <div class="stat-label">Feels like</div>
+            <div id="feelsLike" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Humidity</div>
+            <div id="humidity" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Wind</div>
+            <div id="wind" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Precipitation</div>
+            <div id="precip" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">UV Index</div>
+            <div id="uvIndex" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Cloud cover</div>
+            <div id="cloudCover" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Pressure</div>
+            <div id="pressure" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Dew point</div>
+            <div id="dewPoint" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Visibility</div>
+            <div id="visibility" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Sunrise / Sunset</div>
+            <div id="sunTimes" class="stat-value">—</div>
+          </div>
+        </div>
+      </article>
+
+      <div class="grid">
+        <article class="card" id="hourlyCard">
+          <div class="card-header">
+            <div>
+              <h2>Hourly forecast</h2>
+              <div class="sub">Next 24 hours — temperature, rain chance & wind</div>
+            </div>
+          </div>
+          <div id="hourly" class="h-scroll" aria-label="Hourly forecast"></div>
+        </article>
+
+        <article class="card" id="dailyCard">
+          <div class="card-header">
+            <div>
+              <h2>14-day outlook</h2>
+              <div class="sub">Daily highs, lows, rain & UV</div>
+            </div>
+          </div>
+          <div id="daily" class="daily-list" aria-label="Daily forecast"></div>
+        </article>
+
+        <article class="card" id="airQualityCard">
+          <div class="card-header">
+            <div>
+              <h2>Air Quality</h2>
+              <div class="sub">Current air quality index and pollutants</div>
+            </div>
+          </div>
+          <div id="airQualityGrid" class="details-grid"></div>
+        </article>
+
+        <article class="card" id="detailsCard">
+          <div class="card-header">
+            <div>
+              <h2>Today's details</h2>
+              <div class="sub">Key metrics at a glance</div>
+            </div>
+          </div>
+          <div id="detailsGrid" class="details-grid"></div>
+        </article>
+
+        <article class="card" id="tipsCard">
+          <div class="card-header">
+            <div>
+              <h2>Smart tips</h2>
+              <div class="sub">What to wear and plan for</div>
+            </div>
+          </div>
+          <ul id="tips" class="tips"></ul>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Data from <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a> &amp; OpenStreetMap.</div>
+      <div class="foot-right" id="footMeta">—</div>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
